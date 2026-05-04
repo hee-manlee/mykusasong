@@ -358,44 +358,33 @@ body {
 
 .footer-btns {
   display: flex;
-  gap: 10px;
-}
-
-.back-to-list-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 50px;
-  flex: 1;
-  background: var(--bg);
-  color: var(--text);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-.back-to-list-btn:active { background: var(--border); }
-
-.sheet-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 8px;
-  height: 50px;
-  flex: 2;
-  background: var(--primary);
-  color: white;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 56px;
+  flex: 1;
   border: none;
   border-radius: 12px;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  color: white;
+  letter-spacing: 0.3px;
 }
-.sheet-btn:active { background: var(--primary-dark); }
+.action-btn:active { opacity: 0.82; }
+
+.btn-sheet  { background: #2563eb; }
+.btn-mr     { background: #059669; }
+.btn-song   { background: #dc2626; }
+
+.btn-icon { font-size: 20px; line-height: 1; }
 </style>
 </head>
 <body>
@@ -450,17 +439,14 @@ body {
   </div>
   <div class="lyrics-footer">
     <div class="footer-btns">
-      <button class="back-to-list-btn" onclick="showList()">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-          <path d="M15 18l-6-6 6-6"/>
-        </svg>
-        목록
+      <button class="action-btn btn-sheet" id="btnSheetEl">
+        <span class="btn-icon">🎼</span>악보보기
       </button>
-      <button class="sheet-btn" id="sheetBtnEl">
-        <svg width="18" height="18" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-        </svg>
-        악보 검색
+      <button class="action-btn btn-mr" id="btnMrEl">
+        <span class="btn-icon">🎵</span>MR듣기
+      </button>
+      <button class="action-btn btn-song" id="btnSongEl">
+        <span class="btn-icon">▶️</span>노래듣기
       </button>
     </div>
   </div>
@@ -588,8 +574,13 @@ function showLyrics(idx) {
   document.getElementById('lyricsTextEl').textContent = s.lyrics;
   document.getElementById('lyricsBodyEl').scrollTop = 0;
 
-  document.getElementById('sheetBtnEl').onclick = () =>
-    window.location.href = 'https://www.google.com/search?q=' + encodeURIComponent(s.title + ' 악보');
+  const q = encodeURIComponent(s.title);
+  document.getElementById('btnSheetEl').onclick = () =>
+    window.location.href = 'https://www.google.com/search?q=' + q + '+악보';
+  document.getElementById('btnMrEl').onclick = () =>
+    window.location.href = 'https://www.youtube.com/results?search_query=' + q + '+MR';
+  document.getElementById('btnSongEl').onclick = () =>
+    window.location.href = 'https://www.youtube.com/results?search_query=' + q;
 
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('lyricsView').classList.remove('hidden');
