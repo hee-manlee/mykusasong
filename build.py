@@ -224,6 +224,59 @@ body {
   font-size: 15px;
 }
 
+.random-bar {
+  padding: 8px 12px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.random-pick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  background: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 17px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+.random-pick-btn:active { background: #6d28d9; }
+
+.random-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 34px;
+  padding: 0 12px;
+  background: white;
+  color: var(--text-muted);
+  border: 1.5px solid var(--border);
+  border-radius: 17px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+.random-clear-btn:active { background: var(--bg); }
+
+.random-info {
+  font-size: 12px;
+  color: var(--text-muted);
+  flex: 1;
+  text-align: right;
+}
+
 /* ── 가사 화면 ── */
 #lyricsView { background: var(--white); }
 
@@ -364,6 +417,11 @@ body {
   </div>
 
   <div class="genre-scroll" id="genreScrollEl"></div>
+  <div class="random-bar" id="randomBarEl">
+    <button class="random-pick-btn" onclick="pickRandom()">🎲 랜덤 20곡 선택하기</button>
+    <button class="random-clear-btn" id="randomClearEl" style="display:none" onclick="clearRandom()">✕ 전체 목록</button>
+    <span class="random-info" id="randomInfoEl"></span>
+  </div>
   <div class="song-count" id="songCountEl"></div>
   <div class="song-list-wrap">
     <div id="songListEl"></div>
@@ -413,6 +471,9 @@ const SONGS = /* SONGS_DATA */;
 
 let activeGenre = '전체';
 let searchQuery = '';
+let randomMode = false;
+let randomSongs = [];
+let usedIndices = new Set();
 
 const genres = ['전체', ...[...new Set(SONGS.map(s => s.genre))].sort()];
 
@@ -435,8 +496,53 @@ document.getElementById('searchInput').addEventListener('input', e => {
   renderList();
 });
 
+function pickRandom() {
+  let available = SONGS.map((_, i) => i).filter(i => !usedIndices.has(i));
+  let reset = false;
+  if (available.length < 20) {
+    usedIndices.clear();
+    available = SONGS.map((_, i) => i);
+    reset = true;
+  }
+  // Fisher-Yates shuffle, pick 20
+  for (let i = available.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [available[i], available[j]] = [available[j], available[i]];
+  }
+  const picked = available.slice(0, 20);
+  picked.forEach(i => usedIndices.add(i));
+  randomSongs = picked.map(i => SONGS[i]);
+  randomMode = true;
+  updateRandomUI(reset);
+  renderList();
+}
+
+function clearRandom() {
+  randomMode = false;
+  randomSongs = [];
+  updateRandomUI(false);
+  renderList();
+}
+
+function updateRandomUI(reset) {
+  const clearBtn = document.getElementById('randomClearEl');
+  const infoEl = document.getElementById('randomInfoEl');
+  const pickBtn = document.querySelector('.random-pick-btn');
+  if (randomMode) {
+    clearBtn.style.display = '';
+    pickBtn.textContent = '🎲 다시 20곡';
+    const remaining = SONGS.length - usedIndices.size;
+    infoEl.textContent = reset ? '처음부터 다시 시작' : `남은 곡: ${remaining}곡`;
+  } else {
+    clearBtn.style.display = 'none';
+    pickBtn.textContent = '🎲 랜덤 20곡 선택하기';
+    infoEl.textContent = '';
+  }
+}
+
 function filteredSongs() {
-  return SONGS.filter(s =>
+  const base = randomMode ? randomSongs : SONGS;
+  return base.filter(s =>
     (activeGenre === '전체' || s.genre === activeGenre) &&
     (!searchQuery || s.title.includes(searchQuery))
   );
