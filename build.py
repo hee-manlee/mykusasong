@@ -45,7 +45,7 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>나의 노래책</title>
+<title>kusa 7080 노래</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -303,18 +303,41 @@ body {
   background: var(--white);
 }
 
+.footer-btns {
+  display: flex;
+  gap: 10px;
+}
+
+.back-to-list-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 50px;
+  flex: 1;
+  background: var(--bg);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.back-to-list-btn:active { background: var(--border); }
+
 .sheet-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: 100%;
   height: 50px;
+  flex: 2;
   background: var(--primary);
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -327,7 +350,7 @@ body {
 <!-- 목록 화면 -->
 <div id="listView" class="view">
   <div class="list-header">
-    <div class="app-title">🎵 나의 노래책</div>
+    <div class="app-title">🎵 kusa 7080 노래</div>
     <div class="search-wrap">
       <svg class="search-icon" width="16" height="16" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24">
         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
@@ -368,12 +391,20 @@ body {
     <div class="lyrics-text" id="lyricsTextEl"></div>
   </div>
   <div class="lyrics-footer">
-    <button class="sheet-btn" id="sheetBtnEl">
-      <svg width="18" height="18" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-      </svg>
-      악보 검색
-    </button>
+    <div class="footer-btns">
+      <button class="back-to-list-btn" onclick="showList()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+        목록
+      </button>
+      <button class="sheet-btn" id="sheetBtnEl">
+        <svg width="18" height="18" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        악보 검색
+      </button>
+    </div>
   </div>
 </div>
 
@@ -452,7 +483,7 @@ function showLyrics(idx) {
   document.getElementById('lyricsBodyEl').scrollTop = 0;
 
   document.getElementById('sheetBtnEl').onclick = () =>
-    window.open('https://www.google.com/search?q=' + encodeURIComponent(s.title + ' 악보'), '_blank');
+    window.location.href = 'https://www.google.com/search?q=' + encodeURIComponent(s.title + ' 악보');
 
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('lyricsView').classList.remove('hidden');
