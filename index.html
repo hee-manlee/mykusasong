@@ -356,6 +356,32 @@ body {
 .btn-song   { background: #dc2626; }
 
 .btn-icon { font-size: 20px; line-height: 1; }
+
+.footer-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 48px;
+  flex: 1;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.1s;
+}
+.nav-btn:active { background: var(--bg); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
 </style>
 </head>
 <body>
@@ -418,6 +444,16 @@ body {
     <div class="lyrics-text" id="lyricsTextEl"></div>
   </div>
   <div class="lyrics-footer">
+    <div class="footer-nav">
+      <button class="nav-btn" id="btnFooterPrev" onclick="navSong(-1)">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        이전 곡
+      </button>
+      <button class="nav-btn" id="btnFooterNext" onclick="navSong(1)">
+        다음 곡
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
     <div class="footer-btns">
       <button class="action-btn btn-sheet" id="btnSheetEl">
         <span class="btn-icon">🎼</span>악보보기
@@ -557,8 +593,12 @@ function showLyrics(idx) {
 
   document.getElementById('lyricsBodyEl').scrollTop = 0;
 
-  document.getElementById('btnPrev').disabled = idx === 0;
-  document.getElementById('btnNext').disabled = idx === SONGS.length - 1;
+  const atFirst = idx === 0;
+  const atLast = idx === SONGS.length - 1;
+  document.getElementById('btnPrev').disabled = atFirst;
+  document.getElementById('btnNext').disabled = atLast;
+  document.getElementById('btnFooterPrev').disabled = atFirst;
+  document.getElementById('btnFooterNext').disabled = atLast;
 
   const q = encodeURIComponent(s.title);
   document.getElementById('btnSheetEl').onclick = () =>
